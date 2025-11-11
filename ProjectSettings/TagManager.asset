@@ -41,3 +41,18 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: HUD_World
+    uniqueID: 2808716745
+    locked: 0
+  - name: HUD_Static
+    uniqueID: 1875168613
+    locked: 0
+  - name: Inventory
+    uniqueID: 2043584483
+    locked: 0
+  - name: Menu
+    uniqueID: 632270611
+    locked: 0
+  - name: System
+    uniqueID: 1494882643
+    locked: 0

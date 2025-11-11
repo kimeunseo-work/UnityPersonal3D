@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-public class Player : Chracter
+public class Player : Character
 {
     [Header("Player")]
     [SerializeField] PlayerInput _input;
@@ -28,7 +28,18 @@ public class Player : Chracter
     public override int Hp
     {
         get => _hp;
-        protected set => _hp = value;
+        protected set
+        {
+            if (_hp != value)
+            {
+                _hp = Mathf.Clamp(
+                    value,
+                    StatConstants.MinHP,
+                    MaxHp
+                );
+                OnHpChanged?.Invoke(value, MaxHp);
+            }
+        }
     }
     public override int MaxHp
     {
@@ -84,6 +95,8 @@ public class Player : Chracter
     }
     #endregion
 
+    public event Action<int, int> OnHpChanged;
+
     #region StateMachine Properties
     public StateMachine<Player> MoveState { get; private set; }
     #endregion
@@ -116,25 +129,25 @@ public class Player : Chracter
     private void Start()
     {
         /*Status*/
-        Hp = _data.Hp;
         MaxHp = _data.Hp;
+        Hp = _data.Hp;
         Stamina = _data.Stamina;
         MaxStamina = _data.Stamina;
         Atk = _data.Atk;
         SpeedWeight = 0;
         JumpWeight = 0;
-        /* // Status
-                Debug.Log($"[{gameObject.name}] Hp {Hp}");
-                Debug.Log($"[{gameObject.name}] MaxHp {MaxHp}");
-                Debug.Log($"[{gameObject.name}] Stamina {Stamina}");
-                Debug.Log($"[{gameObject.name}] MaxStamina {MaxStamina}");
-                Debug.Log($"[{gameObject.name}] Atk {Atk}");
-                Debug.Log($"[{gameObject.name}] SpeedWeight {SpeedWeight}");
-                Debug.Log($"[{gameObject.name}] JumpWeight {JumpWeight}");
-                Debug.Log($"[{gameObject.name}] WalkSpeed {WalkSpeed}");
-                Debug.Log($"[{gameObject.name}] RunSpeed {RunSpeed}");
-                Debug.Log($"[{gameObject.name}] JumpPower {JumpPower}");
-                Debug.Log($"[{gameObject.name}] JumpMoveSpeed {JumpMoveSpeed}");*/
+/*        // Status
+        Debug.Log($"[{gameObject.name}] Hp {Hp}");
+        Debug.Log($"[{gameObject.name}] MaxHp {MaxHp}");
+        Debug.Log($"[{gameObject.name}] Stamina {Stamina}");
+        Debug.Log($"[{gameObject.name}] MaxStamina {MaxStamina}");
+        Debug.Log($"[{gameObject.name}] Atk {Atk}");
+        Debug.Log($"[{gameObject.name}] SpeedWeight {SpeedWeight}");
+        Debug.Log($"[{gameObject.name}] JumpWeight {JumpWeight}");
+        Debug.Log($"[{gameObject.name}] WalkSpeed {WalkSpeed}");
+        Debug.Log($"[{gameObject.name}] RunSpeed {RunSpeed}");
+        Debug.Log($"[{gameObject.name}] JumpPower {JumpPower}");
+        Debug.Log($"[{gameObject.name}] JumpMoveSpeed {JumpMoveSpeed}");*/
 
         /*States*/
         MoveState.Initialize(WalkState);
@@ -152,9 +165,9 @@ public class Player : Chracter
     #endregion
 
 
-    public override void TakeDamage()
+    public override void TakeDamage(int amount)
     {
-        throw new System.NotImplementedException();
+        Hp -= amount;
     }
 
     public override void DealDamage()
