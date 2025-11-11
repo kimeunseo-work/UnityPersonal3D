@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 7059939887366561167}
   - component: {fileID: 1370224211470239040}
   m_Layer: 5
-  m_Name: HpBarUI
+  m_Name: PlayerHpBarUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -78,7 +78,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: -1486250551
-  m_SortingOrder: 100
+  m_SortingOrder: 241
   m_TargetDisplay: 0
 --- !u!114 &7059939887366561167
 MonoBehaviour:
@@ -207,7 +207,7 @@ GameObject:
   - component: {fileID: 2304030203424712728}
   - component: {fileID: 5149781511715933499}
   m_Layer: 5
-  m_Name: heart
+  m_Name: state
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
