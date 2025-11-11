@@ -2,19 +2,13 @@
 
 public class Player : Chracter
 {
+    #region SerializeField
     [Header("Player")]
-    [SerializeField] private SO_PlayerData data;
-    /// <summary>
-    /// 플레이어의 입력을 받아 엔티티로 전송
-    /// </summary>
-    [SerializeField] private BaseInput input;
-    /// <summary>
-    /// 상태에 따라 효과음과 애니메이션 출력
-    /// </summary>
-    [SerializeField] private BaseView view;
+    [SerializeField] SO_PlayerData _data;
+    [SerializeField] BaseInput _input;
+    #endregion
 
-    #region Fields
-
+    #region Status Fields
     private int _hp;
     private int _maxHp;
     private int _stamina;
@@ -22,9 +16,9 @@ public class Player : Chracter
     private int _atk;
     private int _speedWeight;
     private int _jumpWeight;
-
     #endregion
 
+    #region Status Properties
     public override int Hp
     {
         get => _hp;
@@ -62,59 +56,83 @@ public class Player : Chracter
     }
     public int WalkSpeed
     {
-        get => data.WalkSpeed + SpeedWeight;
+        get => _data.WalkSpeed + SpeedWeight;
     }
     public int RunSpeed
     {
-        get => data.RunSpeed + SpeedWeight;
+        get => _data.RunSpeed + SpeedWeight;
     }
     public int JumpPower
     {
-        get => data.JumpPower + JumpWeight;
+        get => _data.JumpPower + JumpWeight;
     }
     public int JumpMoveSpeed
     {
-        get => data.JumpMoveSpeed;
+        get => _data.JumpMoveSpeed;
     }
-    
-
-    public bool IsRunning = false;
     public int MoveSpeed
     {
-        get => IsRunning ? RunSpeed : WalkSpeed;
+        get => MoveState.CurrentState is WalkState<Player>
+            ? WalkSpeed
+            : RunSpeed;
     }
+    #endregion
 
+    #region StateMachine Properties
+    public StateMachine<Player> MoveState { get; private set; }
+    #endregion
 
+    #region IState Properties
+    public IState WalkState { get; private set; }
+    public IState RunState { get; private set; }
+    #endregion
+
+    #region LifeCycle
+    private void Awake()
+    {
+        MoveState = new StateMachine<Player>();
+        WalkState = new WalkState<Player>();
+        RunState = new RunState<Player>();
+    }
 
     private void Reset()
     {
-        input = GetComponent<BaseInput>();
-        view = GetComponent<BaseView>();
+        _input = GetComponent<BaseInput>();
     }
 
     private void Start()
     {
-        Hp = data.Hp;
-        MaxHp = data.Hp;
-        Stamina = data.Stamina;
-        MaxStamina = data.Stamina;
-        Atk = data.Atk;
+        /*Status*/
+        Hp = _data.Hp;
+        MaxHp = _data.Hp;
+        Stamina = _data.Stamina;
+        MaxStamina = _data.Stamina;
+        Atk = _data.Atk;
         SpeedWeight = 0;
         JumpWeight = 0;
-/* // Status
-        Debug.Log($"[{gameObject.name}] Hp {Hp}");
-        Debug.Log($"[{gameObject.name}] MaxHp {MaxHp}");
-        Debug.Log($"[{gameObject.name}] Stamina {Stamina}");
-        Debug.Log($"[{gameObject.name}] MaxStamina {MaxStamina}");
-        Debug.Log($"[{gameObject.name}] Atk {Atk}");
-        Debug.Log($"[{gameObject.name}] SpeedWeight {SpeedWeight}");
-        Debug.Log($"[{gameObject.name}] JumpWeight {JumpWeight}");
-        Debug.Log($"[{gameObject.name}] WalkSpeed {WalkSpeed}");
-        Debug.Log($"[{gameObject.name}] RunSpeed {RunSpeed}");
-        Debug.Log($"[{gameObject.name}] JumpPower {JumpPower}");
-        Debug.Log($"[{gameObject.name}] JumpMoveSpeed {JumpMoveSpeed}");*/
+        /* // Status
+                Debug.Log($"[{gameObject.name}] Hp {Hp}");
+                Debug.Log($"[{gameObject.name}] MaxHp {MaxHp}");
+                Debug.Log($"[{gameObject.name}] Stamina {Stamina}");
+                Debug.Log($"[{gameObject.name}] MaxStamina {MaxStamina}");
+                Debug.Log($"[{gameObject.name}] Atk {Atk}");
+                Debug.Log($"[{gameObject.name}] SpeedWeight {SpeedWeight}");
+                Debug.Log($"[{gameObject.name}] JumpWeight {JumpWeight}");
+                Debug.Log($"[{gameObject.name}] WalkSpeed {WalkSpeed}");
+                Debug.Log($"[{gameObject.name}] RunSpeed {RunSpeed}");
+                Debug.Log($"[{gameObject.name}] JumpPower {JumpPower}");
+                Debug.Log($"[{gameObject.name}] JumpMoveSpeed {JumpMoveSpeed}");*/
+
+        /*States*/
+        MoveState.Initialize(WalkState);
     }
 
+    private void Update()
+    {
+        /*States*/
+        MoveState.Update();
+    }
+    #endregion
 
 
     public override void TakeDamage()
@@ -142,5 +160,11 @@ public class Player : Chracter
 
     }
 
-
+    #region ChangeState API
+    public void ChangeMoveState(IState newState)
+    {
+        if (MoveState.CurrentState == newState) return;
+        MoveState.ChangeState(newState);
+    }
+    #endregion
 }

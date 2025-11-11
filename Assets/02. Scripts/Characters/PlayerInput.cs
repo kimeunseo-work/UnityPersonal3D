@@ -50,7 +50,7 @@ public class PlayerInput : BaseInput
                 if (input == prevInput
                     && Time.time - lastKeyInputTime < doubleTapThreshold)
                 {
-                    Debug.Log($"[{gameObject.name}] DoubleTap");
+                    _player.ChangeMoveState(_player.RunState);
                 }
 
                 // 마지막 키 정보 할당
@@ -60,7 +60,7 @@ public class PlayerInput : BaseInput
         }
         else if (context.phase == InputActionPhase.Canceled)
         {
-            Debug.Log($"[{gameObject.name}] Cancle DoubleTap");
+            _player.ChangeMoveState(_player.WalkState);
             input = Vector2.zero;
         }
     }
