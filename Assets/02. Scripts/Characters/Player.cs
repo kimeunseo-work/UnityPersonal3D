@@ -2,11 +2,14 @@
 
 public class Player : Chracter
 {
-    #region SerializeField
     [Header("Player")]
+    [SerializeField] PlayerInput _input;
     [SerializeField] SO_PlayerData _data;
-    [SerializeField] BaseInput _input;
-    #endregion
+
+    [Header("Movement")]
+    [SerializeField] Rigidbody _rb;
+
+    public PlayerInput Input => _input;
 
     #region Status Fields
     private int _hp;
@@ -91,17 +94,19 @@ public class Player : Chracter
     private void Awake()
     {
         MoveState = new StateMachine<Player>();
-        WalkState = new WalkState<Player>();
-        RunState = new RunState<Player>();
+        WalkState = new WalkState<Player>(this);
+        RunState = new RunState<Player>(this);
     }
 
     private void Reset()
     {
-        _input = GetComponent<BaseInput>();
+        _input = GetComponent<PlayerInput>();
     }
 
     private void Start()
     {
+        Debug.Log($"[{gameObject.name}] Input is {Input}");
+
         /*Status*/
         Hp = _data.Hp;
         MaxHp = _data.Hp;
@@ -140,17 +145,23 @@ public class Player : Chracter
         throw new System.NotImplementedException();
     }
 
-    protected override void DealDamage()
+    public override void DealDamage()
     {
         throw new System.NotImplementedException();
     }
 
-    protected override void Move()
+    public override void Move(Vector2 input)
     {
-        throw new System.NotImplementedException();
+        Vector3 dir = transform.forward * input.y
+                    + transform.right * input.x;
+
+        dir *= MoveSpeed;
+        dir.y = _rb.velocity.y;
+
+        _rb.velocity = dir;
     }
 
-    protected override void Die()
+    public override void Die()
     {
         throw new System.NotImplementedException();
     }
