@@ -17,5 +17,5 @@ MonoBehaviour:
   WalkSpeed: 3
   RunSpeed: 5
   Stamina: 50
-  JumpPower: 2
-  JumpMoveSpeed: 1
+  JumpPower: 10
+  JumpMoveSpeed: 2

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class Player : Chracter
 {
@@ -8,8 +9,10 @@ public class Player : Chracter
 
     [Header("Movement")]
     [SerializeField] Rigidbody _rb;
+    [SerializeField] LayerMask _groundLayerMask;
 
     public PlayerInput Input => _input;
+    public LayerMask GroundLayerMask => _groundLayerMask;
 
     #region Status Fields
     private int _hp;
@@ -86,27 +89,32 @@ public class Player : Chracter
     #endregion
 
     #region IState Properties
+    public IState IdleState { get; private set; }
     public IState WalkState { get; private set; }
     public IState RunState { get; private set; }
+    public IState JumpState { get; private set; }
     #endregion
+
+    public event Action OnLanded;
 
     #region LifeCycle
     private void Awake()
     {
         MoveState = new StateMachine<Player>();
+        IdleState = new IdleState<Player>(this);
         WalkState = new WalkState<Player>(this);
         RunState = new RunState<Player>(this);
+        JumpState = new JumpState<Player>(this);
     }
 
     private void Reset()
     {
         _input = GetComponent<PlayerInput>();
+        _rb = GetComponent<Rigidbody>();
     }
 
     private void Start()
     {
-        Debug.Log($"[{gameObject.name}] Input is {Input}");
-
         /*Status*/
         Hp = _data.Hp;
         MaxHp = _data.Hp;
@@ -136,6 +144,10 @@ public class Player : Chracter
     {
         /*States*/
         MoveState.Update();
+
+        if (IsGrounded()
+            && MoveState.CurrentState is JumpState<Player>)
+            OnLanded?.Invoke();
     }
     #endregion
 
@@ -161,15 +173,50 @@ public class Player : Chracter
         _rb.velocity = dir;
     }
 
+    #region Jump
+    public void Jump()
+    {
+        _rb.AddForce(Vector2.up * JumpPower, ForceMode.Impulse);
+    }
+
+    bool IsGrounded()
+    {
+        float rayLength = 1f;
+        Vector3 baseOffset = new(0, 0.01f, 0);
+        Ray[] rays = new Ray[4]
+        {
+            new(transform.position + baseOffset + (transform.forward * 0.2f), Vector3.down),
+            new(transform.position + baseOffset + (-transform.forward * 0.2f), Vector3.down),
+            new(transform.position + baseOffset + (transform.right * 0.2f), Vector3.down),
+            new(transform.position + baseOffset + (-transform.right * 0.2f), Vector3.down)
+        };
+
+        for (int i = 0; i < rays.Length; i++)
+        {
+            Ray ray = rays[i];
+
+            if (Physics.Raycast(ray, out RaycastHit hit, rayLength, GroundLayerMask))
+            {
+                // 충돌한 지점까지 레이 표시 (초록색)
+                Debug.DrawLine(ray.origin, hit.point, Color.green);
+                return true;
+            }
+            else
+            {
+                // 충돌 안 하면 레이 길이만큼 표시 (빨간색)
+                Debug.DrawLine(ray.origin, ray.origin + ray.direction * rayLength, Color.red);
+            }
+        }
+        return false;
+    }
+    #endregion
+
     public override void Die()
     {
         throw new System.NotImplementedException();
     }
 
-    private void Jump()
-    {
 
-    }
 
     #region ChangeState API
     public void ChangeMoveState(IState newState)
