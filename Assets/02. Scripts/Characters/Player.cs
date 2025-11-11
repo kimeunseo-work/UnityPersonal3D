@@ -14,6 +14,7 @@ public class Player : Chracter
     [SerializeField] private BaseView view;
 
     #region Fields
+
     private int _hp;
     private int _maxHp;
     private int _stamina;
@@ -21,6 +22,7 @@ public class Player : Chracter
     private int _atk;
     private int _speedWeight;
     private int _jumpWeight;
+
     #endregion
 
     public override int Hp
@@ -73,6 +75,13 @@ public class Player : Chracter
     public int JumpMoveSpeed
     {
         get => data.JumpMoveSpeed;
+    }
+    
+
+    public bool IsRunning = false;
+    public int MoveSpeed
+    {
+        get => IsRunning ? RunSpeed : WalkSpeed;
     }
 
 
@@ -132,4 +141,6 @@ public class Player : Chracter
     {
 
     }
+
+
 }

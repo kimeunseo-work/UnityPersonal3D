@@ -1,18 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.InputSystem;
 
-public class BaseInput : MonoBehaviour
+public abstract class BaseInput : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    public abstract void OnMove(InputAction.CallbackContext context);
+    public abstract void OnJump(InputAction.CallbackContext context);
+    public abstract void OnAttack(InputAction.CallbackContext context);
 }
