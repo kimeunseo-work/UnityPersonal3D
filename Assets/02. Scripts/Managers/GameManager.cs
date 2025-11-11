@@ -11,21 +11,7 @@ public enum GameState
 
 public class GameManager : MonoBehaviour
 {
-    private static GameManager _instance;
-    public static GameManager Instance
-    {
-        get
-        {
-            if( _instance == null)
-            {
-                _instance = new GameObject().AddComponent<GameManager>();
-            }
-
-            return _instance;
-        }
-    }
-
-
+    public static GameManager Instance;
 
     [Header("Managers")]
     public AudioManager AudioManager;
@@ -40,10 +26,16 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance == this)
+        if (Instance == null)
+        {
+            Instance = this;
             DontDestroyOnLoad(gameObject);
-        else
+        }
+        else if (Instance != this)
+        {
             Destroy(gameObject);
+            return;
+        }
     }
 
     private void Reset()
