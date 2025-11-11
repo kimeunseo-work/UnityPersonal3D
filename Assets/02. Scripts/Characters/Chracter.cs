@@ -1,18 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class Chracter : MonoBehaviour
+public abstract class Chracter : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    public abstract int Hp { get; protected set; }
+    public abstract int MaxHp { get; protected set; }
+    public abstract void TakeDamage();
+    protected abstract void DealDamage();
+    protected abstract void Move();
+    protected abstract void Die();
 }
