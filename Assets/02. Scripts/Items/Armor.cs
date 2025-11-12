@@ -1,12 +1,17 @@
-﻿public class Armor : Equpiment
+﻿using UnityEngine;
+[CreateAssetMenu(menuName = "SO/Item/Armor")]
+public class Armor : Equpiment
 {
-    public string _name;
-    public string _description;
-    public int _atk;
+    [SerializeField] string _name;
+    [SerializeField] string _description;
+    [SerializeField] Sprite _icon;
+    [SerializeField] int _hp;
 
     public override string Name => _name;
     public override string Description => _description;
-    public int Atk => _atk;
+    public override Sprite Icon => _icon;
+    public int Hp => _hp;
+
 
     public override void Equip()
     {

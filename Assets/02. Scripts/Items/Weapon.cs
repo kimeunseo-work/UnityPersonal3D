@@ -1,12 +1,17 @@
-﻿public class Weapon : Equpiment
+﻿using UnityEngine;
+
+[CreateAssetMenu(menuName = "SO/Item/Weapon")]
+public class Weapon : Equpiment
 {
-    public string _name;
-    public string _description;
-    public int _hp;
+    [SerializeField] string _name;
+    [SerializeField] string _description;
+    [SerializeField] Sprite _icon;
+    [SerializeField] int _atk;
 
     public override string Name => _name;
     public override string Description => _description;
-    public int Hp => _hp;
+    public override Sprite Icon => _icon;
+    public int Atk => _atk;
 
     public override void Equip()
     {
