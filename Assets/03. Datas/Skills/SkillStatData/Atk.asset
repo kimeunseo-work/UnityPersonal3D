@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ea70a8f294afe4488c7af8d2f3f0167, type: 3}
   m_Name: Atk
   m_EditorClassIdentifier: 
-  Stat: 0
+  Stat: 4

@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e62a27a05cb17df4b9fc93bd8f721897, type: 3}
   m_Name: AttackBuffSkill
   m_EditorClassIdentifier: 
-  _skillName: AttackBufff
+  _skillName: 
   _cooldown: 12
-  _icon: {fileID: 0}
+  _icon: {fileID: 21300000, guid: b31220f3ff6f6664ba48672ad9f0ce15, type: 3}
   _affectedStats:
-  - Stat: {fileID: 11400000, guid: 90fb0476ede791c438671715d2c512be, type: 2}
+  - Stat: {fileID: 11400000, guid: 8a7457c03b205ed4aa2842f7c397efa0, type: 2}
     Value: 30
   _duration: 8
