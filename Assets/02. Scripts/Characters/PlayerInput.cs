@@ -18,7 +18,7 @@ public class PlayerInput : BaseInput
         _player = GetComponent<Player>();
     }
 
-    
+
 
     public override void OnAttack(InputAction.CallbackContext context)
     {
@@ -60,6 +60,14 @@ public class PlayerInput : BaseInput
             && context.phase == InputActionPhase.Started)
         {
             _player.ChangeMoveState(_player.JumpState);
+        }
+    }
+
+    public void OnDetect(InputAction.CallbackContext context)
+    {
+        if (context.phase == InputActionPhase.Started)
+        {
+            _player.Detect();
         }
     }
 }

@@ -11,6 +11,9 @@ public class Player : Character
     [SerializeField] Rigidbody _rb;
     [SerializeField] LayerMask _groundLayerMask;
 
+    [Header("Skills")]
+    [SerializeField] Skill _detective;
+
     public PlayerInput Input => _input;
     public LayerMask GroundLayerMask => _groundLayerMask;
 
@@ -165,6 +168,7 @@ public class Player : Character
     #endregion
 
 
+
     public override void TakeDamage(int amount)
     {
         Hp -= amount;
@@ -229,6 +233,8 @@ public class Player : Character
         throw new System.NotImplementedException();
     }
 
+    public void Detect()
+        => _detective.Activate();
 
 
     #region ChangeState API
