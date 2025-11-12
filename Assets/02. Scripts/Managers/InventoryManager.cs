@@ -4,57 +4,76 @@ using UnityEngine;
 
 public class InventoryManager : MonoBehaviour
 {
+    [Header("SlotType")]
+    [SerializeField] SlotType ArmorType;
+    [SerializeField] SlotType WeaponType;
+    [SerializeField] SlotType ActiveItemType;
+    [SerializeField] SlotType ItemType;
+
     [Header("InventoryArea")]
     [SerializeField] Transform ArmorArea;
     [SerializeField] Transform WeaponArea;
     [SerializeField] Transform ActiveItemArea;
     [SerializeField] Transform ItemArea;
 
-    public Item Armor { get; private set; }
-    public Slot ArmorSlot { get; private set; }
-    public Item Weapon { get; private set; }
-    public Slot WeaponSlot { get; private set; }
-    public List<Item> ActiveItems { get; private set; } = new(4);
-    public List<Slot> ActiveItemSlots { get; private set; }
-    public List<Item> Items { get; private set; } = new(28);
-    public List<Slot> Slots { get; private set; }
+    public SlotUI ArmorSlot { get; private set; }
+    public SlotUI WeaponSlot { get; private set; }
+    public List<SlotUI> ActiveItemSlots { get; private set; }
+    public List<SlotUI> Slots { get; private set; }
 
+    public Dictionary<SlotType, List<SlotUI>> SlotDictionary;
+
+    private Dictionary<string, Item> _itemCache = new(28);
 
 
     private void Start()
     {
-        ArmorSlot = ArmorArea.GetComponentInChildren<Slot>();
-        WeaponSlot = WeaponArea.GetComponentInChildren<Slot>();
-        ActiveItemSlots = ActiveItemArea.GetComponentsInChildren<Slot>().ToList();
-        Slots = ItemArea.GetComponentsInChildren<Slot>().ToList();
+        ArmorSlot = ArmorArea.GetComponentInChildren<SlotUI>();
+        WeaponSlot = WeaponArea.GetComponentInChildren<SlotUI>();
+        ActiveItemSlots = ActiveItemArea.GetComponentsInChildren<SlotUI>().ToList();
+        Slots = ItemArea.GetComponentsInChildren<SlotUI>().ToList();
+
+        SlotDictionary = new Dictionary<SlotType, List<SlotUI>>(4)
+        {
+            { ArmorType, new List<SlotUI> { ArmorSlot } },
+            { WeaponType, new List<SlotUI> { WeaponSlot } },
+            { ActiveItemType, ActiveItemSlots },
+            { ItemType, Slots },
+        };
     }
 
 
 
     public void GetItem(Item targetItem)
     {
-        if (Items.Contains(targetItem))
+        if (_itemCache.ContainsKey(targetItem.Name))
         {
-            var index = Items.IndexOf(targetItem);
-            var slot = Slots[index];
+            var slot = Slots.Find(x => x.Item == targetItem);
 
-            if (Slots[index].Item is SingleUseItem)
+            if (slot.Item is SingleUseItem)
                 slot.CurrentStackCount++;
             else
                 Debug.Log($"[{gameObject.name}] Item is not SingleUse");
         }
         else
         {
-            Items.Add(targetItem);
-            var index = Items.IndexOf(targetItem);
-            Slots[index].Item = targetItem;
+            Slots
+                .Find(x => x.Item == null)
+                .Item = targetItem;
+
+            _itemCache.Add(targetItem.Name, targetItem);
         }
     }
 
-    public void RemoveItem(Item item)
+    public void SwapItem(SlotUI droppedSlot, SlotUI targetSlot)
     {
-        var index = Items.IndexOf(item);
-        Items.RemoveAt(index);
-        Slots[index].Item = null;
+        var droppedItem = droppedSlot.Item;
+        var targetItem = targetSlot.Item;
+
+        var droppedIndex = SlotDictionary[droppedSlot.Type].IndexOf(droppedSlot);
+        var targetIndex = SlotDictionary[targetSlot.Type].IndexOf(targetSlot);
+
+        SlotDictionary[droppedSlot.Type][droppedIndex].Item = targetItem;
+        SlotDictionary[targetSlot.Type][targetIndex].Item = droppedItem;
     }
 }
