@@ -16,32 +16,31 @@ public class InventoryManager : MonoBehaviour
     [SerializeField] Transform ActiveItemArea;
     [SerializeField] Transform ItemArea;
 
-    public SlotUI ArmorSlot { get; private set; }
-    public SlotUI WeaponSlot { get; private set; }
-    public List<SlotUI> ActiveItemSlots { get; private set; }
-    public List<SlotUI> Slots { get; private set; }
+    public Slot ArmorSlot { get; private set; }
+    public Slot WeaponSlot { get; private set; }
+    public List<Slot> ActiveItemSlots { get; private set; }
+    public List<Slot> Slots { get; private set; }
 
-    public Dictionary<SlotType, List<SlotUI>> SlotDictionary;
+    public Dictionary<SlotType, List<Slot>> SlotDictionary;
 
-    private Dictionary<string, Item> _itemCache = new(28);
+    private Dictionary<string, Item> _itemCache = new(4);
 
 
     private void Start()
     {
-        ArmorSlot = ArmorArea.GetComponentInChildren<SlotUI>();
-        WeaponSlot = WeaponArea.GetComponentInChildren<SlotUI>();
-        ActiveItemSlots = ActiveItemArea.GetComponentsInChildren<SlotUI>().ToList();
-        Slots = ItemArea.GetComponentsInChildren<SlotUI>().ToList();
+        ArmorSlot = ArmorArea.GetComponentInChildren<Slot>();
+        WeaponSlot = WeaponArea.GetComponentInChildren<Slot>();
+        ActiveItemSlots = ActiveItemArea.GetComponentsInChildren<Slot>().ToList();
+        Slots = ItemArea.GetComponentsInChildren<Slot>().ToList();
 
-        SlotDictionary = new Dictionary<SlotType, List<SlotUI>>(4)
+        SlotDictionary = new Dictionary<SlotType, List<Slot>>(4)
         {
-            { ArmorType, new List<SlotUI> { ArmorSlot } },
-            { WeaponType, new List<SlotUI> { WeaponSlot } },
+            { ArmorType, new List<Slot> { ArmorSlot } },
+            { WeaponType, new List<Slot> { WeaponSlot } },
             { ActiveItemType, ActiveItemSlots },
             { ItemType, Slots },
         };
     }
-
 
 
     public void GetItem(Item targetItem)
@@ -65,7 +64,7 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
-    public void SwapItem(SlotUI droppedSlot, SlotUI targetSlot)
+    public void SwapItem(Slot droppedSlot, Slot targetSlot)
     {
         var droppedItem = droppedSlot.Item;
         var targetItem = targetSlot.Item;
