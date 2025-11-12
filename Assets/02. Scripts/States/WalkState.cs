@@ -9,7 +9,7 @@ public class WalkState<T> : IState
 
     public void Enter()
     {
-        Debug.Log($"[{typeof(T).Name}] Start Walk");
+        //Debug.Log($"[{typeof(T).Name}] Start Walk");
     }
     public void Update()
     {
@@ -20,6 +20,6 @@ public class WalkState<T> : IState
     public void Exit()
     {
         _owner.Move(default);
-        Debug.Log($"[{typeof(T).Name}] Exit Walk");
+        //Debug.Log($"[{typeof(T).Name}] Exit Walk");
     }
 }

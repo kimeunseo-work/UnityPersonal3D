@@ -12,9 +12,15 @@ public class Player : Character
     [SerializeField] Rigidbody _rb;
     [SerializeField] LayerMask _groundLayerMask;
 
+    public Vector3 vector3;
+
     public PlayerInput Input => _input;
     public Rigidbody Rigidbody => _rb;
     public LayerMask GroundLayerMask => _groundLayerMask;
+
+    /*Status*/
+    //=======================================================//
+
 
     #region Status Fields
     private int _hp;
@@ -98,11 +104,14 @@ public class Player : Character
     #endregion
 
 
+    /*State*/
+    //=======================================================//
+
+
     #region StateMachine Properties
     public StateMachine<Player> GroundedState { get; private set; }
     public StateMachine<Player> AirborneState { get; private set; }
     #endregion
-
 
     #region IState Properties
     /*추가 후 Awake()에서 초기화 필요*/
@@ -115,12 +124,19 @@ public class Player : Character
     #endregion
 
 
+    /*Event*/
+    //=======================================================//
+
+
     /// <summary>
     /// 착지 이벤트
     /// </summary>
     public event Action OnLanded;
     public event Action<int, int> OnHpChanged;
 
+
+    /*LifeCycle*/
+    //=======================================================//
 
 
     #region LifeCycle
@@ -178,19 +194,39 @@ public class Player : Character
         /*States*/
         GroundedState?.Update();
         AirborneState?.Update();
+
+        vector3 = Rigidbody.velocity;
     }
 
     #endregion
 
-    public override void TakeDamage(int amount)
+
+    /*Change*/
+    //=======================================================//
+
+
+    #region ChangeState API
+    public void ChangeMoveState(IState newState)
     {
-        Hp -= amount;
+        if (GroundedState.CurrentState == newState) return;
+        GroundedState.ChangeState(newState);
+    }
+    public void ChangeAirborneState(IState newState)
+    {
+        if (AirborneState.CurrentState == newState) return;
+        AirborneState.ChangeState(newState);
+    }
+    #endregion
+
+    public void SetJumpWeight(int amount)
+    {
+        //Debug.Log($"[{gameObject.name}] SetJumpWeight");
+        JumpWeight = amount;
     }
 
-    public override void DealDamage()
-    {
-        throw new System.NotImplementedException();
-    }
+    /*Move*/
+    //=======================================================//
+
 
     #region Move
     public override void TryWalk()
@@ -200,7 +236,7 @@ public class Player : Character
 
     public override void TryRun()
     {
-        if(AirborneState == null)
+        if (AirborneState == null)
             ChangeMoveState(RunState);
     }
 
@@ -216,16 +252,16 @@ public class Player : Character
     }
     #endregion
 
-
     #region Jump
     public void TryJump()
     {
-        if (AirborneState.CurrentState is null)
+        if (AirborneState.CurrentState is not JumpState<Player>)
             ChangeAirborneState(JumpState);
     }
 
     public void Jump()
     {
+        Rigidbody.velocity = Vector3.zero;
         Rigidbody.AddForce(Vector2.up * JumpPower, ForceMode.Impulse);
     }
 
@@ -262,11 +298,25 @@ public class Player : Character
 
     #endregion
 
-    public override void Die()
+
+    /*Combat*/
+    //=======================================================//
+
+
+    public override void TakeDamage(int amount)
+    {
+        Hp -= amount;
+    }
+
+    public override void DealDamage()
     {
         throw new System.NotImplementedException();
     }
 
+    public override void Die()
+    {
+        throw new System.NotImplementedException();
+    }
 
     #region Skills
     public void Detect()
@@ -274,18 +324,4 @@ public class Player : Character
 
     #endregion
 
-
-
-    #region ChangeState API
-    public void ChangeMoveState(IState newState)
-    {
-        if (GroundedState.CurrentState == newState) return;
-        GroundedState.ChangeState(newState);
-    }
-    public void ChangeAirborneState(IState newState)
-    {
-        if (AirborneState.CurrentState == newState) return;
-        AirborneState.ChangeState(newState);
-    }
-    #endregion
 }

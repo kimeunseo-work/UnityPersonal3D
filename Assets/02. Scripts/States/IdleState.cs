@@ -11,7 +11,7 @@ public class IdleState<T> : IState
 
     public void Enter()
     {
-        Debug.Log($"[{typeof(T).Name}] Start Idle");
+        //Debug.Log($"[{typeof(T).Name}] Start Idle");
     }
 
     public void Update()
@@ -21,6 +21,6 @@ public class IdleState<T> : IState
 
     public void Exit()
     {
-        Debug.Log($"[{typeof(T).Name}] Start Idle");
+        //Debug.Log($"[{typeof(T).Name}] Start Idle");
     }
 }
