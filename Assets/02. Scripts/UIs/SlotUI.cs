@@ -48,6 +48,9 @@ public class SlotUI : MonoBehaviour,
 
 
 
+    /*LifeCycle*/
+    //=======================================================//
+
     private void Start()
     {
         scaleFactor = _canvas.GetComponent<CanvasScaler>().scaleFactor;

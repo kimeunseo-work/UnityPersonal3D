@@ -11,7 +11,7 @@ public class JumpObject : DetectableObject
            .GetComponent<Player>() is Player player)
         {
             player.ChangeAirborneState(null);
-            player.SetJumpWeight(_weight);
+            player.ModifyJumpWeight(_weight);
             player.TryJump();
         }
     }
@@ -21,28 +21,28 @@ public class JumpObject : DetectableObject
         if (collision.transform
             .GetComponent<Player>() is Player player)
         {
-            player.SetJumpWeight(default);
+            player.ModifyJumpWeight(default);
         }
     }
 
-    private void OnTriggerEnter(Collider other)
-    {
+    //private void OnTriggerEnter(Collider other)
+    //{
 
-        if (other.transform.parent
-            .GetComponent<Player>() is Player player)
-        {
-            player.ChangeAirborneState(null);
-            player.SetJumpWeight(_weight);
-            player.TryJump();
-        }
-    }
+    //    if (other.transform.parent
+    //        .GetComponent<Player>() is Player player)
+    //    {
+    //        player.ChangeAirborneState(null);
+    //        player.SetJumpWeight(_weight);
+    //        player.TryJump();
+    //    }
+    //}
 
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.transform.parent
-            .GetComponent<Player>() is Player player)
-        {
-            player.SetJumpWeight(default);
-        }
-    }
+    //private void OnTriggerExit(Collider other)
+    //{
+    //    if (other.transform.parent
+    //        .GetComponent<Player>() is Player player)
+    //    {
+    //        player.SetJumpWeight(default);
+    //    }
+    //}
 }

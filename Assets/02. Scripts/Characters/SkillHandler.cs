@@ -30,7 +30,7 @@ public class SkillHandler : MonoBehaviour
         }
     }
 
-    public void TryUseSkill(KeyCode key)
+    public void TryUseSkill(KeyCode key, Player target)
     {
         if (!bindingMap.ContainsKey(key)) return;
 
@@ -43,7 +43,7 @@ public class SkillHandler : MonoBehaviour
             return;
         }
 
-        skill.Activate();
-        cooldownTimers[key] = skill.CoolDown;
+        StartCoroutine(skill.Activate(target));
+        cooldownTimers[key] = skill.Cooldown;
     }
 }

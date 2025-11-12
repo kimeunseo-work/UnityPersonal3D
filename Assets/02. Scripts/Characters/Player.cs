@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Player : Character
@@ -12,8 +13,6 @@ public class Player : Character
     [SerializeField] Rigidbody _rb;
     [SerializeField] LayerMask _groundLayerMask;
 
-    public Vector3 vector3;
-
     public PlayerInput Input => _input;
     public Rigidbody Rigidbody => _rb;
     public LayerMask GroundLayerMask => _groundLayerMask;
@@ -21,8 +20,7 @@ public class Player : Character
     /*Status*/
     //=======================================================//
 
-
-    #region Status Fields
+    #region Status Fields: 프로퍼티 구성용
     private int _hp;
     private int _maxHp;
     private int _stamina;
@@ -32,7 +30,7 @@ public class Player : Character
     private int _jumpWeight;
     #endregion
 
-    #region Status Properties
+    #region Status Properties: 스탯 Get 전용
     public override int Hp
     {
         get => _hp;
@@ -69,11 +67,17 @@ public class Player : Character
         get => _atk;
         private set => _atk = value;
     }
+    /// <summary>
+    /// 이동 속도 조절에 사용
+    /// </summary>
     public int SpeedWeight
     {
         get => _speedWeight;
         private set => _speedWeight = value;
     }
+    /// <summary>
+    /// 점프 파워 조절에 사용
+    /// </summary>
     public int JumpWeight
     {
         get => _jumpWeight;
@@ -91,10 +95,16 @@ public class Player : Character
     {
         get => _data.JumpPower + JumpWeight;
     }
+    /// <summary>
+    /// 점프 중 방향 이동 속도 (미구현)
+    /// </summary>
     public int JumpMoveSpeed
     {
         get => _data.JumpMoveSpeed;
     }
+    /// <summary>
+    /// 계산에 사용되는 이동 속도
+    /// </summary>
     public int MoveSpeed
     {
         get => GroundedState.CurrentState is WalkState<Player>
@@ -103,12 +113,36 @@ public class Player : Character
     }
     #endregion
 
+    #region StatModity Actions: 직접 호출 X
+    /*함수를 추가 할 경우 Awake에서 등록 필수*/
+
+    public void ModifyHp(int amount, bool isPositive = true)
+        => Hp = isPositive ? amount : -amount;
+
+    public void ModifyStamina(int amount, bool isPositive = true)
+        => Stamina = isPositive ? amount : -amount;
+
+    public void ModifyAtk(int amount, bool isPositive = true)
+        => Atk = isPositive ? amount : -amount;
+
+    public void ModifySpeedWeight(int amount, bool isPositive = true)
+        => SpeedWeight = isPositive ? amount : -amount;
+
+    public void ModifyJumpWeight(int amount, bool isPositive = true)
+        => JumpWeight = isPositive ? amount : -amount;
+
+    #endregion
+
+    /// <summary>
+    /// 현재 용도: 스탯 관련 스킬에서 스탯 판별용으로 사용
+    /// </summary>
+    public Dictionary<Enum.Stats, Action<int, bool>> StatModifyActions;
+
 
     /*State*/
     //=======================================================//
 
-
-    #region StateMachine Properties
+    #region StateMachine Properties 
     public StateMachine<Player> GroundedState { get; private set; }
     public StateMachine<Player> AirborneState { get; private set; }
     #endregion
@@ -126,7 +160,6 @@ public class Player : Character
 
     /*Event*/
     //=======================================================//
-
 
     /// <summary>
     /// 착지 이벤트
@@ -154,6 +187,16 @@ public class Player : Character
         /*AirborneState*/
         JumpState = new JumpState<Player>(this);
         FallState = new FallState<Player>(this);
+
+        StatModifyActions =
+        new Dictionary<Enum.Stats, Action<int, bool>>()
+        {
+            { Enum.Stats.Hp, ModifyHp },
+            { Enum.Stats.Stamina, ModifyStamina },
+            { Enum.Stats.Atk, ModifyAtk },
+            { Enum.Stats.SpeedWeight, ModifySpeedWeight },
+            { Enum.Stats.JumpWeight, ModifyJumpWeight },
+        };
     }
 
     private void Reset()
@@ -194,8 +237,6 @@ public class Player : Character
         /*States*/
         GroundedState?.Update();
         AirborneState?.Update();
-
-        vector3 = Rigidbody.velocity;
     }
 
     #endregion
@@ -223,6 +264,8 @@ public class Player : Character
         //Debug.Log($"[{gameObject.name}] SetJumpWeight");
         JumpWeight = amount;
     }
+
+
 
     /*Move*/
     //=======================================================//
@@ -320,8 +363,7 @@ public class Player : Character
 
     #region Skills
     public void Detect()
-        => _skillHandler.TryUseSkill(KeyCode.A);
+        => _skillHandler.TryUseSkill(KeyCode.A, null);
 
     #endregion
-
 }
