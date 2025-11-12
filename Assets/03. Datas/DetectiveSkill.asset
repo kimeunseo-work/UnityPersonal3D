@@ -9,12 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a30b2114646a0ba45bacde94de6fde83, type: 3}
-  m_Name: Detective
+  m_Script: {fileID: 11500000, guid: e092cff3ef01d2d46bdc6e15a10e65e6, type: 3}
+  m_Name: DetectiveSkill
   m_EditorClassIdentifier: 
-  _skillName: Detective
-  _coolDown: 5
-  _icon: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-  detectableLayerMask:
-    serializedVersion: 2
-    m_Bits: 128
+  key: 97
+  skill: {fileID: 11400000, guid: 8f69770f153d27641b92a4fcbc29cca4, type: 2}

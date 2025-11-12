@@ -6,13 +6,11 @@ public class Player : Character
     [Header("Player")]
     [SerializeField] PlayerInput _input;
     [SerializeField] SO_PlayerData _data;
+    [SerializeField] SkillHandler _skillHandler;
 
     [Header("Movement")]
     [SerializeField] Rigidbody _rb;
     [SerializeField] LayerMask _groundLayerMask;
-
-    [Header("Skills")]
-    [SerializeField] Skill _detective;
 
     public PlayerInput Input => _input;
     public LayerMask GroundLayerMask => _groundLayerMask;
@@ -234,7 +232,7 @@ public class Player : Character
     }
 
     public void Detect()
-        => _detective.Activate();
+        => _skillHandler.TryUseSkill(KeyCode.A);
 
 
     #region ChangeState API
