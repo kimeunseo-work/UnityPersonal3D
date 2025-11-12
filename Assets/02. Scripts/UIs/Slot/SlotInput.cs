@@ -2,12 +2,17 @@
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class SlotInput : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerEnterHandler, IPointerExitHandler, IBeginDragHandler, IDragHandler, IEndDragHandler, IDropHandler
+public class SlotInput : MonoBehaviour, IPointerClickHandler, IPointerDownHandler, IPointerUpHandler, IPointerEnterHandler, IPointerExitHandler, IBeginDragHandler, IDragHandler, IEndDragHandler, IDropHandler
 {
     /*Move*/
     private Slot _slot;
     private Vector3 _originalPosition;
     private float _scaleFactor;
+
+    /*doubleClick*/
+    private float lastClickTime;
+    private const float doubleClickThreshold = 0.25f; // 초 단위
+
 
 
     public void Init(Slot slot, Transform canvas)
@@ -18,13 +23,28 @@ public class SlotInput : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
             .scaleFactor;
     }
 
-
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        if (_slot.Item == null) return;
+        if (Time.time - lastClickTime < doubleClickThreshold)
+        {
+            Debug.Log($"[{gameObject.name}] doubleClick");
+            _slot.Activate();
+            lastClickTime = 0;
+        }
+        else
+        {
+            Debug.Log($"[{gameObject.name}] not doubleClick");
+            lastClickTime = Time.time;
+        }
+    }
 
     /// <summary>
     /// 마우스 버튼 또는 터치 눌림 순간 감지
     /// </summary>
     public void OnPointerDown(PointerEventData eventData)
     {
+
     }
 
     /// <summary>

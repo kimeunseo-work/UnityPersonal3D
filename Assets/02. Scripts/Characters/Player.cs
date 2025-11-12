@@ -64,8 +64,15 @@ public class Player : Character
     }
     public int Atk
     {
+            
         get => _atk;
-        private set => _atk = value;
+        private set
+        {
+            Debug.Log(_atk);
+            _atk = value;
+            Debug.Log(_atk);
+        }
+
     }
     /// <summary>
     /// 이동 속도 조절에 사용
@@ -117,19 +124,19 @@ public class Player : Character
     /*함수를 추가 할 경우 Awake에서 등록 필수*/
 
     public void ModifyHp(int amount, bool isPositive = true)
-        => Hp = isPositive ? amount : -amount;
+        => Hp += isPositive ? amount : -amount;
 
     public void ModifyStamina(int amount, bool isPositive = true)
-        => Stamina = isPositive ? amount : -amount;
+        => Stamina += isPositive ? amount : -amount;
 
     public void ModifyAtk(int amount, bool isPositive = true)
-        => Atk = isPositive ? amount : -amount;
+        => Atk += isPositive ? amount : -amount;
 
     public void ModifySpeedWeight(int amount, bool isPositive = true)
-        => SpeedWeight = isPositive ? amount : -amount;
+        => SpeedWeight += isPositive ? amount : -amount;
 
     public void ModifyJumpWeight(int amount, bool isPositive = true)
-        => JumpWeight = isPositive ? amount : -amount;
+        => JumpWeight += isPositive ? amount : -amount;
 
     #endregion
 

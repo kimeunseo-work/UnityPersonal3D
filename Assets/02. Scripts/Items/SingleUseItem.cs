@@ -12,7 +12,7 @@ public class SingleUseItem : ActiveItem
     public override Sprite Icon => _icon;
     public int StackCount => _stackCount;
 
-    public override void Activate()
+    public override Skill Activate()
     {
         throw new System.NotImplementedException();
     }

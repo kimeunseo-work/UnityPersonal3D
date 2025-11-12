@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class InventoryManager : MonoBehaviour
 {
+    [SerializeField] Player _player;
+
     [Header("SlotType")]
     [SerializeField] SlotType ArmorType;
     [SerializeField] SlotType WeaponType;
@@ -24,6 +26,8 @@ public class InventoryManager : MonoBehaviour
     public Dictionary<SlotType, List<Slot>> SlotDictionary;
 
     private Dictionary<string, Item> _itemCache = new(4);
+
+    public Player Player => _player;
 
 
     private void Start()

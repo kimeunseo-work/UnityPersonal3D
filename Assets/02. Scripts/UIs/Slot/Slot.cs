@@ -45,6 +45,7 @@ public class Slot : MonoBehaviour
     }
 
 
+
     private void Reset()
     {
         _canvas = GetComponentInParent<Canvas>().transform;
@@ -64,6 +65,21 @@ public class Slot : MonoBehaviour
         _input.Init(this, _canvas);
     }
 
+
+
+    public void Activate()
+    {
+        Debug.Log($"[{gameObject.name}] _itemType {_item.GetType()}");
+
+        if (_item is ReusableItem item)
+        {
+            var skill = item.Activate();
+            StartCoroutine(skill.Activate(_manager.Player));
+            return;
+        }
+
+        Debug.Log($"[{gameObject.name}] not ActiveItem");
+    }
 
 
     public void BeingDrag(ref Vector3 originalPosition)

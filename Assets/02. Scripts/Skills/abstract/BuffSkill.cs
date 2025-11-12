@@ -16,6 +16,7 @@ public class BuffSkill : Skill
     {
         foreach (AffectedStat stat in _affectedStats)
         {
+            Debug.Log($"[BuffSkill] stat {stat.Stat}");
             if (target.StatModifyActions
                 .TryGetValue(stat.Stat.Stat, out var action)
             )
