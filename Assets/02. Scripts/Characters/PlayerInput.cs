@@ -19,7 +19,6 @@ public class PlayerInput : BaseInput
     }
 
 
-
     public override void OnAttack(InputAction.CallbackContext context)
     {
         Debug.Log("OnAttack");
@@ -30,7 +29,7 @@ public class PlayerInput : BaseInput
         if (context.phase == InputActionPhase.Performed)
         {
             Input = context.ReadValue<Vector2>();
-            _player.ChangeMoveState(_player.WalkState);
+            _player.TryWalk();
 
             // 멈춤 판정이 아니라면
             if (Input != Vector2.zero)
@@ -39,7 +38,7 @@ public class PlayerInput : BaseInput
                 if (Input == prevInput
                     && Time.time - lastKeyInputTime < doubleTapThreshold)
                 {
-                    _player.ChangeMoveState(_player.RunState);
+                    _player.TryRun();
                 }
 
                 // 마지막 키 정보 할당
@@ -49,17 +48,16 @@ public class PlayerInput : BaseInput
         }
         else if (context.phase == InputActionPhase.Canceled)
         {
-            _player.ChangeMoveState(_player.IdleState);
             Input = Vector2.zero;
+            _player.ChangeMoveState(_player.IdleState);
         }
     }
 
     public void OnJump(InputAction.CallbackContext context)
     {
-        if (_player.MoveState.CurrentState is not JumpState<Player>
-            && context.phase == InputActionPhase.Started)
+        if (context.phase == InputActionPhase.Started)
         {
-            _player.ChangeMoveState(_player.JumpState);
+            _player.TryJump();
         }
     }
 

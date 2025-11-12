@@ -13,6 +13,7 @@ public class Player : Character
     [SerializeField] LayerMask _groundLayerMask;
 
     public PlayerInput Input => _input;
+    public Rigidbody Rigidbody => _rb;
     public LayerMask GroundLayerMask => _groundLayerMask;
 
     #region Status Fields
@@ -90,35 +91,53 @@ public class Player : Character
     }
     public int MoveSpeed
     {
-        get => MoveState.CurrentState is WalkState<Player>
+        get => GroundedState.CurrentState is WalkState<Player>
             ? WalkSpeed
             : RunSpeed;
     }
     #endregion
 
-    public event Action<int, int> OnHpChanged;
 
     #region StateMachine Properties
-    public StateMachine<Player> MoveState { get; private set; }
+    public StateMachine<Player> GroundedState { get; private set; }
+    public StateMachine<Player> AirborneState { get; private set; }
     #endregion
 
+
     #region IState Properties
+    /*추가 후 Awake()에서 초기화 필요*/
     public IState IdleState { get; private set; }
     public IState WalkState { get; private set; }
     public IState RunState { get; private set; }
+
     public IState JumpState { get; private set; }
+    public IState FallState { get; private set; }
     #endregion
 
+
+    /// <summary>
+    /// 착지 이벤트
+    /// </summary>
     public event Action OnLanded;
+    public event Action<int, int> OnHpChanged;
+
+
 
     #region LifeCycle
     private void Awake()
     {
-        MoveState = new StateMachine<Player>();
+        /*StateMachine*/
+        GroundedState = new StateMachine<Player>();
+        AirborneState = new StateMachine<Player>();
+
+        /*GroundedState*/
         IdleState = new IdleState<Player>(this);
         WalkState = new WalkState<Player>(this);
         RunState = new RunState<Player>(this);
+
+        /*AirborneState*/
         JumpState = new JumpState<Player>(this);
+        FallState = new FallState<Player>(this);
     }
 
     private void Reset()
@@ -137,35 +156,31 @@ public class Player : Character
         Atk = _data.Atk;
         SpeedWeight = 0;
         JumpWeight = 0;
-/*        // Status
-        Debug.Log($"[{gameObject.name}] Hp {Hp}");
-        Debug.Log($"[{gameObject.name}] MaxHp {MaxHp}");
-        Debug.Log($"[{gameObject.name}] Stamina {Stamina}");
-        Debug.Log($"[{gameObject.name}] MaxStamina {MaxStamina}");
-        Debug.Log($"[{gameObject.name}] Atk {Atk}");
-        Debug.Log($"[{gameObject.name}] SpeedWeight {SpeedWeight}");
-        Debug.Log($"[{gameObject.name}] JumpWeight {JumpWeight}");
-        Debug.Log($"[{gameObject.name}] WalkSpeed {WalkSpeed}");
-        Debug.Log($"[{gameObject.name}] RunSpeed {RunSpeed}");
-        Debug.Log($"[{gameObject.name}] JumpPower {JumpPower}");
-        Debug.Log($"[{gameObject.name}] JumpMoveSpeed {JumpMoveSpeed}");*/
+        /*        // Status
+                Debug.Log($"[{gameObject.name}] Hp {Hp}");
+                Debug.Log($"[{gameObject.name}] MaxHp {MaxHp}");
+                Debug.Log($"[{gameObject.name}] Stamina {Stamina}");
+                Debug.Log($"[{gameObject.name}] MaxStamina {MaxStamina}");
+                Debug.Log($"[{gameObject.name}] Atk {Atk}");
+                Debug.Log($"[{gameObject.name}] SpeedWeight {SpeedWeight}");
+                Debug.Log($"[{gameObject.name}] JumpWeight {JumpWeight}");
+                Debug.Log($"[{gameObject.name}] WalkSpeed {WalkSpeed}");
+                Debug.Log($"[{gameObject.name}] RunSpeed {RunSpeed}");
+                Debug.Log($"[{gameObject.name}] JumpPower {JumpPower}");
+                Debug.Log($"[{gameObject.name}] JumpMoveSpeed {JumpMoveSpeed}");*/
 
         /*States*/
-        MoveState.Initialize(WalkState);
+        GroundedState.Initialize(WalkState);
     }
 
     private void Update()
     {
         /*States*/
-        MoveState.Update();
-
-        if (IsGrounded()
-            && MoveState.CurrentState is JumpState<Player>)
-            OnLanded?.Invoke();
+        GroundedState?.Update();
+        AirborneState?.Update();
     }
+
     #endregion
-
-
 
     public override void TakeDamage(int amount)
     {
@@ -177,24 +192,44 @@ public class Player : Character
         throw new System.NotImplementedException();
     }
 
-    public override void Move(Vector2 input)
+    #region Move
+    public override void TryWalk()
+    {
+        ChangeMoveState(WalkState);
+    }
+
+    public override void TryRun()
+    {
+        if(AirborneState == null)
+            ChangeMoveState(RunState);
+    }
+
+    public void Move(Vector2 input)
     {
         Vector3 dir = transform.forward * input.y
                     + transform.right * input.x;
 
         dir *= MoveSpeed;
-        dir.y = _rb.velocity.y;
+        dir.y = Rigidbody.velocity.y;
 
-        _rb.velocity = dir;
+        Rigidbody.velocity = dir;
     }
+    #endregion
+
 
     #region Jump
-    public void Jump()
+    public void TryJump()
     {
-        _rb.AddForce(Vector2.up * JumpPower, ForceMode.Impulse);
+        if (AirborneState.CurrentState is null)
+            ChangeAirborneState(JumpState);
     }
 
-    bool IsGrounded()
+    public void Jump()
+    {
+        Rigidbody.AddForce(Vector2.up * JumpPower, ForceMode.Impulse);
+    }
+
+    public bool IsGrounded()
     {
         float rayLength = 1f;
         Vector3 baseOffset = new(0, 0.01f, 0);
@@ -224,6 +259,7 @@ public class Player : Character
         }
         return false;
     }
+
     #endregion
 
     public override void Die()
@@ -231,15 +267,25 @@ public class Player : Character
         throw new System.NotImplementedException();
     }
 
+
+    #region Skills
     public void Detect()
         => _skillHandler.TryUseSkill(KeyCode.A);
+
+    #endregion
+
 
 
     #region ChangeState API
     public void ChangeMoveState(IState newState)
     {
-        if (MoveState.CurrentState == newState) return;
-        MoveState.ChangeState(newState);
+        if (GroundedState.CurrentState == newState) return;
+        GroundedState.ChangeState(newState);
+    }
+    public void ChangeAirborneState(IState newState)
+    {
+        if (AirborneState.CurrentState == newState) return;
+        AirborneState.ChangeState(newState);
     }
     #endregion
 }

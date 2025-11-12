@@ -1,6 +1,6 @@
 ﻿public class StateMachine<T>
 {
-    public IState CurrentState { get; private set; }
+    public IState CurrentState { get; private set; } = null;
 
     public void Initialize(IState startState)
     {
@@ -10,9 +10,9 @@
 
     public void ChangeState(IState newState)
     {
-        CurrentState.Exit();
+        CurrentState?.Exit();
         CurrentState = newState;
-        CurrentState.Enter();
+        CurrentState?.Enter();
     }
 
     public void Update() => CurrentState?.Update();

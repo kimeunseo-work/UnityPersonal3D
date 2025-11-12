@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 internal class JumpState<T> : IState
 {
     private readonly Player _owner;
@@ -12,22 +11,18 @@ internal class JumpState<T> : IState
     public void Enter()
     {
         Debug.Log($"[{typeof(T).Name}] Start Jump");
+
         _owner.Jump();
-        _owner.OnLanded += HandleLanded;
     }
 
     public void Update()
     {
+        if (_owner.Rigidbody.velocity.y < 0)
+            _owner.ChangeAirborneState(_owner.FallState);
     }
 
     public void Exit()
     {
         Debug.Log($"[{typeof(T).Name}] Exit Jump");
-        _owner.OnLanded -= HandleLanded;
-    }
-
-    private void HandleLanded()
-    {
-        _owner.ChangeMoveState(_owner.IdleState);
     }
 }

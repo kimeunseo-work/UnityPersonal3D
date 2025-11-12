@@ -21,6 +21,7 @@ public class RunState<T> : IState
     }
     public void Exit()
     {
+        _owner.Move(default);
         Debug.Log($"[{typeof(T).Name}] Exit Run");
     }
 }
