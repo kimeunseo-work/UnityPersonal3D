@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71839bc86a69d66448a8e7710da43167, type: 3}
   m_Name: AttackUpItem
   m_EditorClassIdentifier: 
-  _name: 
-  _description: 
-  _icon: {fileID: 0}
+  _name: AttackUpItem
+  _description: AttackUpItem
+  _icon: {fileID: 21300000, guid: b31220f3ff6f6664ba48672ad9f0ce15, type: 3}
+  _skill: {fileID: 11400000, guid: 32c1e2d3ff2d27944a2263370eb289e4, type: 2}

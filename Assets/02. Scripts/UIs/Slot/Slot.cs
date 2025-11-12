@@ -67,18 +67,13 @@ public class Slot : MonoBehaviour
 
 
 
-    public void Activate()
+    public void HandleSlotDoubleClick()
     {
-        Debug.Log($"[{gameObject.name}] _itemType {_item.GetType()}");
-
         if (_item is ReusableItem item)
         {
-            var skill = item.Activate();
-            StartCoroutine(skill.Activate(_manager.Player));
+            _manager.HandleSlotDoubleClick(item);
             return;
         }
-
-        Debug.Log($"[{gameObject.name}] not ActiveItem");
     }
 
 

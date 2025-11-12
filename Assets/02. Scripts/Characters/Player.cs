@@ -352,6 +352,10 @@ public class Player : Character
     /*Combat*/
     //=======================================================//
 
+    public void UseItem(Skill item)
+    {
+        StartCoroutine(item.Activate(this));
+    }
 
     public override void TakeDamage(int amount)
     {
@@ -367,6 +371,7 @@ public class Player : Character
     {
         throw new System.NotImplementedException();
     }
+
 
     #region Skills
     public void Detect()

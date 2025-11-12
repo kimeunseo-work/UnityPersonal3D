@@ -29,7 +29,7 @@ public class SlotInput : MonoBehaviour, IPointerClickHandler, IPointerDownHandle
         if (Time.time - lastClickTime < doubleClickThreshold)
         {
             Debug.Log($"[{gameObject.name}] doubleClick");
-            _slot.Activate();
+            _slot.HandleSlotDoubleClick();
             lastClickTime = 0;
         }
         else

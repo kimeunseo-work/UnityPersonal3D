@@ -79,4 +79,7 @@ public class InventoryManager : MonoBehaviour
         SlotDictionary[droppedSlot.Type][droppedIndex].Item = targetItem;
         SlotDictionary[targetSlot.Type][targetIndex].Item = droppedItem;
     }
+
+    public void HandleSlotDoubleClick(ReusableItem item)
+        => _player.UseItem(item.Activate());
 }
