@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 [CreateAssetMenu(menuName = "SO/Status/PlayerStatus")]
-public class SO_PlayerData : SO_BaseData
+public class PlayerDataSO : BaseDataSO
 {
     public int Stamina;
     public int JumpPower;

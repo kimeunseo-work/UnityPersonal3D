@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class SO_BaseData : ScriptableObject
+public class BaseDataSO : ScriptableObject
 {
     public int Hp;
     public int Atk;

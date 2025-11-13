@@ -6,7 +6,7 @@ public class Player : Character
 {
     [Header("Player")]
     [SerializeField] PlayerInput _input;
-    [SerializeField] SO_PlayerData _data;
+    [SerializeField] PlayerDataSO _data;
     [SerializeField] SkillHandler _skillHandler;
 
     [Header("Movement")]
