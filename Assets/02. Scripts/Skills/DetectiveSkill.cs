@@ -2,17 +2,12 @@
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "SO/Skill/Detective")]
-public class DetectiveSKill : InstantCastSKill
+public class DetectiveSkill : InstantCastSKill
 {
     private Plane[] _frustumPlanes = new Plane[6];
     [SerializeField] private LayerMask detectableLayerMask;
 
-    public override IEnumerator Activate(Character target)
-    {
-        yield break;
-    }
-
-    public override IEnumerator Activate(Player target)
+    public override IEnumerator Activate()
     {
         _frustumPlanes = GeometryUtility.CalculateFrustumPlanes(Camera.main);
 
