@@ -11,7 +11,7 @@ public class JumpObject : DetectableObject
            .GetComponent<Player>() is Player player)
         {
             player.ChangeAirborneState(null);
-            player.ModifyJumpWeight(_weight);
+            player.ModifyJumpWeight(_weight, true);
             player.TryJump();
         }
     }
@@ -21,7 +21,7 @@ public class JumpObject : DetectableObject
         if (collision.transform
             .GetComponent<Player>() is Player player)
         {
-            player.ModifyJumpWeight(default);
+            player.ModifyJumpWeight(_weight, false);
         }
     }
 

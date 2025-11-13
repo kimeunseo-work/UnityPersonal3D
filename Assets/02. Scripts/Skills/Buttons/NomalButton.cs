@@ -1,4 +1,4 @@
-﻿public class DetectiveButton : SkillButton<DetectiveSkill>
+﻿public class NomalButton : SkillButton<Skill>
 {
     public override void OnClick()
     {

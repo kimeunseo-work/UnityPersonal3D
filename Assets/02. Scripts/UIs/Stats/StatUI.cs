@@ -2,16 +2,14 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class HpUI : MonoBehaviour
+public abstract class StatUI : MonoBehaviour
 {
-    [SerializeField] Player _owner;
+    [SerializeField] protected Player _owner;
 
-    [Header("HP")]
-    [SerializeField] Image _hpbar;
-    [SerializeField] Image _hpState;
+    [Header("Stat")]
+    [SerializeField] protected Image _statbar;
 
-    
-    Coroutine _coroutine;
+    protected Coroutine _coroutine;
     public Coroutine Coroutine
     {
         get => _coroutine;
@@ -23,24 +21,18 @@ public class HpUI : MonoBehaviour
         }
     }
 
-    private void Reset()
+    protected void Reset()
     {
         _owner = GetComponentInParent<Player>();
     }
 
-    private void OnEnable()
-    {
-        _owner.OnHpChanged += HandleHpChanged;
-    }
-    private void OnDisable()
-    {
-        _owner.OnHpChanged -= HandleHpChanged;
-    }
+    protected abstract void OnEnable();
+    protected abstract void OnDisable();
 
-    private void HandleHpChanged(int hp, int maxHp)
-        => Coroutine = StartCoroutine(FillAmountImageCoroutine(_hpbar, hp, maxHp));
+    protected void HandleStatChanged(int value, int maxValue)
+        => Coroutine = StartCoroutine(FillAmountImageCoroutine(_statbar, value, maxValue));
 
-    private IEnumerator FillAmountImageCoroutine(Image target, int currentValue, int maxValue)
+    protected IEnumerator FillAmountImageCoroutine(Image target, int currentValue, int maxValue)
     {
         float end = (float)currentValue / maxValue;
 

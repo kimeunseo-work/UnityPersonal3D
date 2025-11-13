@@ -40,7 +40,7 @@ public class Player : Character
             {
                 _hp = Mathf.Clamp(
                     value,
-                    StatConstants.MinHP,
+                    StatConstants.MinHp,
                     MaxHp
                 );
                 OnHpChanged?.Invoke(value, MaxHp);
@@ -55,7 +55,18 @@ public class Player : Character
     public int Stamina
     {
         get => _stamina;
-        private set => _stamina = value;
+        protected set
+        {
+            if (_stamina != value)
+            {
+                _stamina = Mathf.Clamp(
+                    value,
+                    StatConstants.MinStamina,
+                    MaxStamina
+                );
+                OnStaminaChanged?.Invoke(value, MaxStamina);
+            }
+        }
     }
     public int MaxStamina
     {
@@ -164,6 +175,7 @@ public class Player : Character
     public IState FallState { get; private set; }
     #endregion
 
+    private Coroutine _coroutine;
 
     /*Event*/
     //=======================================================//
@@ -171,9 +183,8 @@ public class Player : Character
     /// <summary>
     /// 착지 이벤트
     /// </summary>
-    public event Action OnLanded;
     public event Action<int, int> OnHpChanged;
-
+    public event Action<int, int> OnStaminaChanged;
 
     /*LifeCycle*/
     //=======================================================//
@@ -268,7 +279,6 @@ public class Player : Character
 
     public void SetJumpWeight(int amount)
     {
-        //Debug.Log($"[{gameObject.name}] SetJumpWeight");
         JumpWeight = amount;
     }
 
@@ -286,7 +296,7 @@ public class Player : Character
 
     public override void TryRun()
     {
-        if (AirborneState == null)
+        if (AirborneState.CurrentState == null)
             ChangeMoveState(RunState);
     }
 
